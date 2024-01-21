@@ -1,4 +1,5 @@
-use crate::evalrus::Ptrs::{ScopedPtr, ScopedRef};
+use crate::evalrus::Ptrs::{FatPtr, ScopedPtr, ScopedRef, TaggedPtr};
+use crate::evalrus::TypeList::TypeList;
 use crate::internals::Alloc::{AllocObject, AllocRaw, RawPtr};
 use crate::internals::StickyImmixHeap::StickyImmixHeap;
 
@@ -15,6 +16,15 @@ impl Heap {
     {
         Ok(self.heap.alloc(object)?)
     }
+    fn alloc_tagged<T>(&self, object: T) -> Result<TaggedPtr, RuntimeError>
+        where
+            FatPtr: From<RawPtr<T>>,
+            T: AllocObject<TypeList>,
+    {
+        Ok(TaggedPtr::from(FatPtr::from(self.heap.alloc(object)?)))
+    }
+
+
 }
 
 
