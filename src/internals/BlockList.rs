@@ -1,8 +1,8 @@
 use std::cell::UnsafeCell;
 use std::marker::PhantomData;
 use std::mem::replace;
-use crate::AllocError;
-use crate::BumpBlock::BumpBlock;
+use crate::internals::Alloc::AllocError;
+use crate::internals::BumpBlock::BumpBlock;
 
 pub struct BlockList {
     head: Option<BumpBlock>,

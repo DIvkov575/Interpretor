@@ -1,8 +1,8 @@
 use std::intrinsics::size_of;
 use std::ptr::write;
-use crate::Block::Block;
-use crate::BlockMeta::BlockMeta;
-use crate::constants;
+use crate::internals::Block::Block;
+use crate::internals::BlockMeta::BlockMeta;
+use crate::internals::constants;
 
 
 pub struct BumpBlock {
@@ -17,7 +17,9 @@ impl BumpBlock {
         let ptr = self.cursor as usize;
         let limit = self.limit as usize;
 
-        let next_ptr = ptr.checked_sub(alloc_size)? & constants::ALLOC_ALIGN_MASK;
+        let align_mask: usize = !(size_of::<usize>() - 1);
+        let next_ptr = ptr.checked_sub(alloc_size)? & align_mask; // fucked around here, shit below was buggin (undefined)
+        // let next_ptr = ptr.checked_sub(alloc_size)? & constants::ALLOC_ALIGN_MASK;
 
         if next_ptr < limit {
             let block_relative_limit =

@@ -7,3 +7,5 @@ pub const LINE_COUNT: usize = BLOCK_SIZE / LINE_SIZE;
 pub const BLOCK_CAPACITY: usize = BLOCK_SIZE - LINE_COUNT;
 pub const BLOCK_SIZE_BITS: usize = 15;
 pub const BLOCK_SIZE: usize = 1 << BLOCK_SIZE_BITS;
+
+// pub const ALLOC_ALIGN_MASK: usize = !(size_of::<usize>() - 1);

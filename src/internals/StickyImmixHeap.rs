@@ -5,6 +5,8 @@ use std::ptr::{from_raw_parts_mut, NonNull, write};
 use crate::Alloc::{AllocError, AllocHeader, AllocObject, AllocRaw, RawPtr};
 use crate::BlockList::BlockList;
 use crate::BumpBlock::BumpBlock;
+use crate::internals::Alloc::{AllocError, AllocHeader, AllocObject, AllocRaw, RawPtr};
+use crate::internals::BlockList::BlockList;
 
 pub struct StickyImmixHeap<H> {
     blocks: UnsafeCell<BlockList>,
@@ -22,7 +24,8 @@ impl StickyImmixHeap<H> {
         let blocks = unsafe { &mut *self.blocks.get() };
         if size_class == SizeClass::Medium && alloc_size > head.current_hole_size() {
             return blocks.overflow_alloc(alloc_size);
-        }    }
+        }
+    }
 }
 
 impl<H: AllocHeader> AllocRaw for StickyImmixHeap<H> {

@@ -1,4 +1,5 @@
 use std::ptr::NonNull;
+use crate::internals::internal;
 
 pub type BlockPtr = NonNull<u8>;
 pub type BlockSize = usize;
