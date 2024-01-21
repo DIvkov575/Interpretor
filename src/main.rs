@@ -1,3 +1,5 @@
+mod evalrus;
+
 use std::ptr::NonNull;
 
 
