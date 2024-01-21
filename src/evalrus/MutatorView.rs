@@ -3,6 +3,7 @@ use crate::evalrus::Ptrs::{ScopedPtr, ScopedRef, TaggedScopedPtr};
 use crate::evalrus::Heap::Heap;
 use crate::evalrus::TypeList::TypeList;
 use crate::internals::Alloc::{AllocObject, RawPtr};
+use crate::internals::Errors::RuntimeError;
 
 pub struct MutatorView<'memory> {
     heap: &'memory Heap,
@@ -29,3 +30,9 @@ impl MutatorView {
     }
 }
 
+
+impl<'memory> MutatorView<'memory> {
+    pub fn lookup_sym(&self, name: &str) -> TaggedScopedPtr<'_> {
+        TaggedScopedPtr::new(self, self.heap.lookup_sym(name))
+    }
+}

@@ -6,3 +6,4 @@ pub mod BlockList;
 pub mod StickyImmixHeap;
 pub mod Alloc;
 pub mod internal;
+pub mod Errors;
