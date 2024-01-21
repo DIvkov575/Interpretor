@@ -1,3 +1,4 @@
+use crate::evalrus::ObjectHeader::ObjectHeader;
 use crate::evalrus::Ptrs::{FatPtr, ScopedPtr, ScopedRef, TaggedPtr};
 use crate::evalrus::TypeList::TypeList;
 use crate::internals::Alloc::{AllocObject, AllocRaw, RawPtr};
