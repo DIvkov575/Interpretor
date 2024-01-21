@@ -1,12 +1,17 @@
 use std::cell::Cell;
 use std::ptr::read;
 use crate::evalrus::MutatorView::MutatorView;
-use crate::evalrus::Ptrs::ScopedPtr;
+use crate::evalrus::Ptrs::{ScopedPtr, TaggedCellPtr, TaggedScopedPtr};
 use crate::evalrus::Traits::MutatorScope;
 use crate::evalrus::TypeList::TypeList;
 use crate::frontend::RawArray::RawArray;
+use crate::frontend::Traits::{StackAnyContainer, StackContainer};
 use crate::internals::Alloc::AllocObject;
 use crate::internals::Errors::RuntimeError;
+
+
+pub type List = Array<TaggedCellPtr>;
+
 
 #[derive(Clone)]
 pub struct Array<T: Sized + Clone> {
@@ -66,3 +71,40 @@ impl<T: Sized + Clone> Array<T> {
 }
 
 
+impl<T: Sized + Clone> StackContainer<T> for Array<T> {
+    fn push<'guard>(&self, mem: &'guard MutatorView, item: T) -> Result<(), RuntimeError> {
+        if self.borrow.get() != INTERIOR_ONLY {
+            return Err(RuntimeError::new(ErrorKind::MutableBorrowError));
+        }
+
+        let length = self.length.get();
+        let mut array = self.data.get(); // Takes a copy
+
+        let capacity = array.capacity();
+
+        if length == capacity {
+            if capacity == 0 {
+                array.resize(mem, DEFAULT_ARRAY_SIZE)?;
+            } else {
+                array.resize(mem, default_array_growth(capacity)?)?;
+            }
+            // Replace the struct's copy with the resized RawArray object
+            self.data.set(array);
+        }
+
+        self.length.set(length + 1);
+        self.write(mem, length, item)?;
+        Ok(())
+    }
+}
+
+
+impl StackAnyContainer for Array<TaggedCellPtr> {
+    fn push<'guard>(
+        &self,
+        mem: &'guard MutatorView,
+        item: TaggedScopedPtr<'guard>,
+    ) -> Result<(), RuntimeError> {
+        StackContainer::<TaggedCellPtr>::push(self, mem, TaggedCellPtr::new_with(item))
+    }
+}
