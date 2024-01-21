@@ -58,6 +58,21 @@ pub trait AllocRaw {
 pub struct RawPtr<T: Sized> {
     ptr: NonNull<T>,
 }
+pub trait Tagged<T> {
+    fn tag(self, tag: usize) -> NonNull<T>;
+    fn untag(from: NonNull<T>) -> RawPtr<T>;
+}
+
+impl<T> Tagged<T> for RawPtr<T> {
+    fn tag(self, tag: usize) -> NonNull<T> {
+        unsafe { NonNull::new_unchecked((self.as_word() | tag) as *mut T) }
+    }
+
+    fn untag(from: NonNull<T>) -> RawPtr<T> {
+        RawPtr::new((from.as_ptr() as usize & PTR_MASK) as *const T)
+    }
+}
+
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum AllocError {

@@ -16,15 +16,6 @@ impl Heap {
     {
         Ok(self.heap.alloc(object)?)
     }
-    fn alloc_tagged<T>(&self, object: T) -> Result<TaggedPtr, RuntimeError>
-        where
-            FatPtr: From<RawPtr<T>>,
-            T: AllocObject<TypeList>,
-    {
-        Ok(TaggedPtr::from(FatPtr::from(self.heap.alloc(object)?)))
-    }
-
 
 }
-
 

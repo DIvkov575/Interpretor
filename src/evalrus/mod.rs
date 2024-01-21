@@ -5,4 +5,6 @@ pub mod MutatorView;
 pub mod Memory;
 pub mod TypeList;
 pub mod Value;
+pub mod FatPtr;
+pub mod TaggedPtr;
 
