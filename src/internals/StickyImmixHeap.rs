@@ -3,7 +3,6 @@ use std::marker::PhantomData;
 use std::mem::{replace, size_of};
 use std::ptr::{from_raw_parts_mut, NonNull, write};
 use crate::Alloc::{AllocError, AllocHeader, AllocObject, AllocRaw, RawPtr};
-use crate::AllocError;
 use crate::BlockList::BlockList;
 use crate::BumpBlock::BumpBlock;
 
