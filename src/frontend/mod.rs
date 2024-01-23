@@ -4,4 +4,5 @@ pub mod RawArray;
 pub mod Array;
 pub mod Traits;
 pub mod opcodes;
-pub mod Bytecode;
+pub mod Dicts;
+pub mod misc;

@@ -1,5 +1,7 @@
+use std::hash::{Hash, Hasher};
 use crate::evalrus::Traits::MutatorScope;
 use crate::evalrus::TypeList::TypeList;
+use crate::frontend::Traits::Hashable;
 use crate::internals::Alloc::AllocObject;
 
 #[derive(Copy, Clone)]
@@ -21,4 +23,10 @@ impl Symbol {
 
 impl AllocObject<TypeList> for Symbol {
     const TYPE_ID: TypeList = TypeList::Symbol;
+}
+
+impl Hashable for Symbol {
+    fn hash<'guard, H: Hasher>(&self, guard: &'guard dyn MutatorScope, h: &mut H) {
+        self.as_str(guard).hash(h)
+    }
 }
