@@ -1,4 +1,45 @@
+use std::intrinsics::size_of;
 use std::ptr::NonNull;
+use crate::frontend::Array::ArraySize;
+use crate::internals::constants;
+
+
+pub fn alloc_size_of(object_size: usize) -> usize {
+    let align = size_of::<usize>(); // * 2;
+    (object_size + (align - 1)) & !(align - 1)
+}
+
+
+const PTR_MASK: usize = !0x3;
+
+#[repr(u8)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum Mark {
+    Allocated,
+    Unmarked,
+    Marked,
+}
+
+#[repr(u8)]
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum SizeClass {
+    Small,
+    Medium,
+    Large,
+}
+
+impl SizeClass {
+    pub fn get_for_size(object_size: usize) -> Result<SizeClass, AllocError> {
+        match object_size {
+            constants::SMALL_OBJECT_MIN..=constants::SMALL_OBJECT_MAX => Ok(SizeClass::Small),
+            constants::MEDIUM_OBJECT_MIN..=constants::MEDIUM_OBJECT_MAX => Ok(SizeClass::Medium),
+            constants::LARGE_OBJECT_MIN..=constants::LARGE_OBJECT_MAX => Ok(SizeClass::Large),
+            _ => Err(AllocError::BadRequest),
+        }
+    }
+}
+
+
 
 pub trait AllocTypeId: Copy + Clone {}
 

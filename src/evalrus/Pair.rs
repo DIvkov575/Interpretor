@@ -2,6 +2,7 @@ use std::cell::Cell;
 use crate::evalrus::MutatorView::MutatorView;
 use crate::evalrus::Ptrs::{TaggedCellPtr, TaggedScopedPtr};
 use crate::evalrus::TypeList::TypeList;
+use crate::frontend::Token::SourcePos;
 use crate::internals::Alloc::AllocObject;
 use crate::internals::Errors::RuntimeError;
 

@@ -6,3 +6,5 @@ pub mod Traits;
 pub mod opcodes;
 pub mod Dicts;
 pub mod misc;
+pub mod vm;
+pub mod Functions;

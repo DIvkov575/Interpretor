@@ -5,12 +5,12 @@ use crate::internals::Alloc::AllocError;
 use crate::internals::BumpBlock::BumpBlock;
 
 pub struct BlockList {
-    head: Option<BumpBlock>,
-    overflow: Option<BumpBlock>,
-    rest: Vec<BumpBlock>,
+    pub head: Option<BumpBlock>,
+    pub overflow: Option<BumpBlock>,
+    pub rest: Vec<BumpBlock>,
 }
 impl BlockList {
-    fn overflow_alloc(&mut self, alloc_size: usize) -> Result<*const u8, AllocError> {
+    pub(crate) fn overflow_alloc(&mut self, alloc_size: usize) -> Result<*const u8, AllocError> {
         match self.overflow {
             Some(ref mut overflow) => {
                 // This is a medium object that might fit in the current block...

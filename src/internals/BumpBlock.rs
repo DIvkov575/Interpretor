@@ -1,5 +1,6 @@
 use std::intrinsics::size_of;
 use std::ptr::write;
+use crate::internals::Alloc::AllocError;
 use crate::internals::Block::Block;
 use crate::internals::BlockMeta::BlockMeta;
 use crate::internals::constants;
@@ -13,6 +14,20 @@ pub struct BumpBlock {
 }
 
 impl BumpBlock {
+    pub fn new() -> Result<BumpBlock, AllocError> {
+        let inner_block = Block::new(constants::BLOCK_SIZE)?;
+        let block_ptr = inner_block.as_ptr();
+
+        let block = BumpBlock {
+            cursor: unsafe { block_ptr.add(constants::BLOCK_CAPACITY) },
+            limit: block_ptr,
+            block: inner_block,
+            meta: BlockMeta::new(block_ptr),
+        };
+
+        Ok(block)
+    }
+
     pub fn inner_alloc(&mut self, alloc_size: usize) -> Option<*const u8> {
         let ptr = self.cursor as usize;
         let limit = self.limit as usize;

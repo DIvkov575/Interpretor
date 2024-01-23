@@ -5,6 +5,17 @@ use crate::evalrus::Traits::MutatorScope;
 use crate::frontend::Array::ArraySize;
 use crate::internals::Errors::RuntimeError;
 
+pub trait FillContainer<T: Sized + Clone>: Container<T> {
+    /// The `item` is an object to copy into each container memory slot.
+    fn fill<'guard>(
+        &self,
+        mem: &'guard MutatorView,
+        size: ArraySize,
+        item: T,
+    ) -> Result<(), RuntimeError>;
+}
+
+
 pub trait StackContainer<T: Sized + Clone>: Container<T> {
     /// Push can trigger an underlying array resize, hence it requires the ability to allocate
     fn push<'guard>(&self, mem: &'guard MutatorView, item: T) -> Result<(), RuntimeError>;

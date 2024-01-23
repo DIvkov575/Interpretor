@@ -1,7 +1,9 @@
 use std::cell::Cell;
 use std::ptr::NonNull;
 use crate::evalrus::FatPtr::FatPtr;
-use crate::internals::Alloc::RawPtr;
+use crate::evalrus::Heap::HeapStorage;
+use crate::evalrus::Traits::MutatorScope;
+use crate::internals::Alloc::{AllocRaw, RawPtr, Tagged};
 use crate::evalrus::TypeList::TypeList::*;
 use crate::evalrus::Value::Value;
 
@@ -14,11 +16,12 @@ pub const TAG_NUMBER: usize = 0x3;
 const PTR_MASK: usize = !0x3;
 
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CellPtr<T: Sized> {
     inner: Cell<RawPtr<T>>,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct ScopedPtr<'guard, T: Sized> {
     value: &'guard T,
 }
@@ -59,7 +62,7 @@ pub struct TaggedScopedPtr<'guard> {
 }
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub union TaggedPtr {
     tag: usize,
     number: isize,
@@ -87,6 +90,11 @@ impl From<FatPtr> for TaggedPtr {
             FatPtr::Upvalue(raw) => TaggedPtr::object(raw),
         }
     }
+}
+
+
+
+impl TaggedPtr {
     fn into_fat_ptr(&self) -> crate::evalrus::FatPtr::FatPtr {
         unsafe {
             if self.tag == 0 {
@@ -109,10 +117,9 @@ impl From<FatPtr> for TaggedPtr {
             }
         }
     }
+
 }
 
-
-
-impl TaggedPtr {
-
+pub fn get_tag(tagged_word: usize) -> usize {
+    tagged_word & TAG_MASK
 }

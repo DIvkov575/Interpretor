@@ -6,7 +6,7 @@ use crate::internals::Alloc::{AllocObject, RawPtr};
 use crate::internals::Errors::RuntimeError;
 
 pub struct MutatorView<'memory> {
-    heap: &'memory Heap,
+    pub heap: &'memory Heap,
 }
 
 impl<'memory> MutatorView<'memory> {

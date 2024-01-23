@@ -21,9 +21,3 @@ pub enum Value<'guard> {
     Upvalue(ScopedPtr<'guard, T::Upvalue>),
 }
 
-impl From<FatPtr> for Value<'guard> {
-    fn from(ptr: FatPtr) -> Value<'guard> {
-
-
-    }
-}

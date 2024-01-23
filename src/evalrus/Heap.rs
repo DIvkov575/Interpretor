@@ -13,13 +13,13 @@ pub struct Heap {
 }
 
 impl Heap {
-    pub(crate) fn alloc<T>(&self, object: T) -> Result<RawPtr<T>, RuntimeError>
+    pub fn alloc<T>(&self, object: T) -> Result<RawPtr<T>, RuntimeError>
         where
             T: AllocObject<TypeList>,
     {
         Ok(self.heap.alloc(object)?)
     }
-    fn alloc_tagged<T>(&self, object: T) -> Result<TaggedPtr, RuntimeError>
+    pub fn alloc_tagged<T>(&self, object: T) -> Result<TaggedPtr, RuntimeError>
         where
             FatPtr: From<RawPtr<T>>,
             T: AllocObject<TypeList>,
@@ -27,7 +27,7 @@ impl Heap {
         Ok(TaggedPtr::from(FatPtr::from(self.heap.alloc(object)?)))
     }
 
-    fn lookup_sym(&self, name: &str) -> TaggedPtr {
+    pub fn lookup_sym(&self, name: &str) -> TaggedPtr {
         TaggedPtr::symbol(self.syms.lookup(name))
     }
 

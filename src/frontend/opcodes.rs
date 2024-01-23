@@ -3,7 +3,7 @@ use std::fmt;
 use std::future::join;
 use std::io::Bytes;
 use crate::evalrus::MutatorView::MutatorView;
-use crate::evalrus::Ptrs::{CellPtr, ScopedPtr, TaggedPtr};
+use crate::evalrus::Ptrs::{CellPtr, ScopedPtr, TaggedPtr, TaggedScopedPtr};
 use crate::evalrus::Traits::MutatorScope;
 use crate::frontend::Array::{Array, ArraySize, List};
 use crate::frontend::Traits::{IndexedContainer, StackContainer};
@@ -192,15 +192,112 @@ impl InstructionStream {
 }
 
 
-#[derive(Copy, Clone)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum Opcode {
-    Add {
-        dest: Register,
-        a: Register,
-        b: Register
+    NoOp,
+    Return {
+        reg: Register,
     },
     LoadLiteral {
         dest: Register,
-        value: LiteralInteger
-    }
+        literal_id: LiteralId,
+    },
+    IsNil {
+        dest: Register,
+        test: Register,
+    },
+    IsAtom {
+        dest: Register,
+        test: Register,
+    },
+    FirstOfPair {
+        dest: Register,
+        reg: Register,
+    },
+    SecondOfPair {
+        dest: Register,
+        reg: Register,
+    },
+    MakePair {
+        dest: Register,
+        reg1: Register,
+        reg2: Register,
+    },
+    IsIdentical {
+        dest: Register,
+        test1: Register,
+        test2: Register,
+    },
+    Jump {
+        offset: JumpOffset,
+    },
+    JumpIfTrue {
+        test: Register,
+        offset: JumpOffset,
+    },
+    JumpIfNotTrue {
+        test: Register,
+        offset: JumpOffset,
+    },
+    LoadNil {
+        dest: Register,
+    },
+    LoadGlobal {
+        dest: Register,
+        name: Register,
+    },
+    StoreGlobal {
+        src: Register,
+        name: Register,
+    },
+    Call {
+        function: Register,
+        dest: Register,
+        arg_count: NumArgs,
+    },
+    MakeClosure {
+        dest: Register,
+        function: Register,
+    },
+    LoadInteger {
+        dest: Register,
+        integer: LiteralInteger,
+    },
+    CopyRegister {
+        dest: Register,
+        src: Register,
+    },
+    Add {
+        dest: Register,
+        reg1: Register,
+        reg2: Register,
+    },
+    Subtract {
+        dest: Register,
+        left: Register,
+        right: Register,
+    },
+    Multiply {
+        dest: Register,
+        reg1: Register,
+        reg2: Register,
+    },
+    DivideInteger {
+        dest: Register,
+        num: Register,
+        denom: Register,
+    },
+    GetUpvalue {
+        dest: Register,
+        src: UpvalueId,
+    },
+    SetUpvalue {
+        dest: UpvalueId,
+        src: Register,
+    },
+    CloseUpvalues {
+        reg1: Register,
+        reg2: Register,
+        reg3: Register,
+    },
 }

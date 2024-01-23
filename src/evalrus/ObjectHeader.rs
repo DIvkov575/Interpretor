@@ -1,7 +1,7 @@
 use crate::evalrus::Heap::HeapStorage;
 use crate::evalrus::Ptrs::FatPtr;
 use crate::evalrus::TypeList::TypeList::{self, *};
-use crate::internals::Alloc::{AllocRaw, RawPtr, Tagged};
+use crate::internals::Alloc::{AllocRaw, Mark, RawPtr, SizeClass, Tagged};
 
 pub struct ObjectHeader {
     mark: Mark,
