@@ -12,6 +12,19 @@ use crate::internals::Errors::RuntimeError;
 
 pub type List = Array<TaggedCellPtr>;
 
+pub type ArraySize = u32;
+pub type BorrowFlag = isize;
+
+pub const DEFAULT_ARRAY_SIZE: ArraySize = 8;
+pub fn default_array_growth(capacity: ArraySize) -> Result<ArraySize, RuntimeError> {
+    if capacity == 0 {
+        Ok(DEFAULT_ARRAY_SIZE)
+    } else {
+        capacity
+            .checked_add(capacity / 2)
+            .ok_or(RuntimeError::new(ErrorKind::BadAllocationRequest))
+    }
+}
 
 #[derive(Clone)]
 pub struct Array<T: Sized + Clone> {
